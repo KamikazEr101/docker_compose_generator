@@ -69,7 +69,7 @@ Docker Compose Generator 利用 CrewAI 框架的强大功能，通过一系列�
 
 **工作流快照：**
 
-[CrewAI Flow Snapshot](crewai_flow_snapshot.png)
+<img src="crewai_flow_snapshot.png" style="zoom:50%;" />
 
 ## 安装与使用
 
@@ -180,5 +180,4 @@ src/docker_compose_generator/
 -   确保 `.env` 文件中的路径为绝对路径且正确无误。
 -   AI代理的输出质量依赖于OpenAI模型的版本和提示词的清晰度。
 -   生成的配置文件（Dockerfile, docker-compose.yml）建议在生产部署前进行人工审查和测试。
-
 
