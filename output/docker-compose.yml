@@ -3,73 +3,61 @@ version: '3.8'
 networks:
   lease_net:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: lease_bridge
-    ipam:
-      config:
-        - subnet: 172.18.0.0/16
 
 services:
   lease:
     image: lease:latest
     networks:
       - lease_net
-    depends_on:
-      - mysql
-      - redis
-      - minio
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/lease
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/lease?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: Norknown2@
       SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
       MINIO_URL: http://minio:9000
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
-
-  mysql:
-    image: mysql:8.0
-    networks:
-      - lease_net
-    environment:
-      MYSQL_ROOT_PASSWORD: Norknown2@
-      MYSQL_DATABASE: lease
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
 
   redis:
-    image: redis:6.2
+    image: redis:latest
     networks:
       - lease_net
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    restart: unless-stopped
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   minio:
     image: minio/minio:latest
     networks:
       - lease_net
+    ports:
+      - "9000:9000"
     environment:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
-    ports:
-      - "9000:9000"
     command: server /data
     volumes:
       - minio_data:/data
-    restart: unless-stopped
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
-  mysql_data:
   redis_data:
   minio_data:

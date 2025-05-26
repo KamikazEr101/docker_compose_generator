@@ -1,5 +1,5 @@
 from crewai import Agent, Crew, Process, Task
-from crewai_tools import FileReadTool
+from crewai_tools import FileReadTool, SerperDevTool
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
@@ -33,7 +33,7 @@ class ServiceInference():
         return Agent(
             config=self.agents_config['service_inference_cache_agent'], # type: ignore[index]
             verbose=True,
-            tools=[FileReadTool()]
+            tools=[FileReadTool(), SerperDevTool()]
         )
 
     @agent

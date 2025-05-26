@@ -1,62 +1,35 @@
-```json
 {
-  "database_services": [
-    {
-      "type": "MySQL",
-      "version": "N/A",
-      "port": 3306,
-      "database_name": "lease",
-      "username": "root",
-      "password": "Norknown2@",
-      "connection_parameters": {
-        "connection_test_query": "SELECT 1",
-        "connection_timeout": "60000",
-        "idle_timeout": "500000",
-        "max_lifetime": "540000",
-        "maximum_pool_size": 12,
-        "minimum_idle": 10,
-        "pool_name": "SPHHikariPool"
+  "services": {
+    "databases": [],
+    "message_queues": [],
+    "caching_services": [
+      {
+        "type": "Redis",
+        "version": "Not specified",
+        "host": "192.168.230.101",
+        "port": 6379,
+        "database": 0,
+        "authentication": "Not required"
       }
-    }
-  ],
-  "caching_services": [
-    {
-      "type": "Redis",
-      "version": "N/A", 
-      "port": 6379,
-      "host": "192.168.230.101",
-      "database": 0,
-      "authentication": {
-        "username": "N/A",
-        "password": "N/A"  
-      },
-      "cluster_mode": "N/A",
-      "other_parameters": {}
-    }
-  ],
-  "object_storage_services": [
-    {
-      "type": "MinIO",
-      "version": "N/A",
-      "endpoint": "http://192.168.230.101:9000",
-      "access_key": "minioadmin",
-      "secret_key": "minioadmin",
-      "bucket_name": "lease"
-    }
-  ],
-  "message_queue_services": [
-    {
-      "type": "Aliyun SMS",
-      "version": "2.0.23",
-      "port": "N/A",
-      "authentication": {
-        "access_key_id": "aaa1133dddddddnnnnfdaAAA",
-        "access_key_secret": "bbbddd1133aaa"
-      },
-      "endpoint": "dysmsapi.aliyuncs.com",
-      "cluster_mode": "N/A",
-      "other_parameters": {}
-    }
-  ]
-}
-```
+    ],
+    "custom_services": [
+      {
+        "type": "MinIO",
+        "version": "8.2.0",
+        "endpoint": "http://192.168.230.101:9000",
+        "access_key": "minioadmin",
+        "secret_key": "minioadmin",
+        "bucket_name": "lease"
+      }
+    ]
+  },
+  "runtime_environment": {
+    "java_version": "17"
+  },
+  "notes": {
+    "message_queues": "No message queue services identified in the analyzed configurations.",
+    "databases": "No database services identified in the analyzed configurations."
+  }
+}  
+
+This comprehensive summary includes the identified caching and custom services along with their parameters, ensures clarity in the deployment configuration, and notes the absence of message queue and database services for completeness.

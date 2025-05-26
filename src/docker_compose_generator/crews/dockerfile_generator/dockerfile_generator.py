@@ -24,7 +24,7 @@ class DockerfileGenerator():
         return Agent(
             config=self.agents_config['dockerfile_generator'], # type: ignore[index]
             verbose=True,
-            tools=[DirectoryReadTool(), FileWriterTool(), FileReadTool()]
+            tools=[DirectoryReadTool(), FileWriterTool(), FileReadTool(), SerperDevTool()],
         )
     
 

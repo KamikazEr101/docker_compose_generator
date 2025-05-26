@@ -49,4 +49,5 @@ compose_integration_task:
     完整的docker-compose.yml文件内容，格式为YAML。
     配置应包括版本声明、所有服务定义、网络配置等，并符合docker-compose规范。
     输出应该是可以直接保存为docker-compose.yml并运行的完整配置。
+    Format without '```'
   agent: compose_integrator

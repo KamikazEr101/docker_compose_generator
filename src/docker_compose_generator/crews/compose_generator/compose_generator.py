@@ -1,7 +1,7 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
-from crewai_tools import FileWriterTool
+from crewai_tools import SerperDevTool
 from typing import List
 from pydantic import BaseModel, Field
 
@@ -22,14 +22,16 @@ class ComposeGenerator():
     def service_analyzer(self) -> Agent:
         return Agent(
             config=self.agents_config['service_analyzer'], # type: ignore[index]
-            verbose=True
+            verbose=True,
+            tools=[SerperDevTool()],
         )
 
     @agent
     def network_configurator(self) -> Agent:
         return Agent(
             config=self.agents_config['network_configurator'], # type: ignore[index]
-            verbose=True
+            verbose=True,
+            tools=[SerperDevTool()],
         )
         
     @agent
@@ -37,7 +39,6 @@ class ComposeGenerator():
         return Agent(
             config=self.agents_config['compose_integrator'], # type: ignore[index]
             verbose=True,
-            tools=[FileWriterTool()]
         )
 
     

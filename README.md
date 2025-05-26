@@ -15,6 +15,7 @@ Docker Compose Generator利用CrewAI框架的多代理协作能力，分析项�
 - **上下文传递**：代理之间可传递分析结果和生成内容
 - **可扩展性**：轻松添加新的代理和任务，扩展系统功能
 - **工作流可视化**：项目根目录下的`crewai_flow.html`提供了直观的工作流可视化展示
+- **工具集成**：集成SerperTool进行实时网络检索，获取最新Docker最佳实践和未知服务配置
 
 ## 主要功能
 
@@ -23,6 +24,8 @@ Docker Compose Generator利用CrewAI框架的多代理协作能力，分析项�
 - **Docker镜像构建**：在正确的构建上下文中自动构建Docker镜像
 - **服务推断**：识别项目依赖的外部服务和中间件
 - **Docker Compose配置生成**：生成包含所有必要服务的docker-compose.yml文件
+- **实时最佳实践检索**：使用SerperTool检索最新的Docker配置最佳实践
+- **未知服务依赖解析**：自动检索并配置项目中未明确定义的服务依赖
 
 ## 系统架构
 
@@ -34,15 +37,40 @@ Docker Compose Generator利用CrewAI框架的多代理协作能力，分析项�
    - 配置正确的工作目录和COPY指令
    - 设置适当的ENTRYPOINT/CMD
    - 在指定构建上下文目录创建Dockerfile
+   - 使用SerperTool检索最新的Dockerfile最佳实践和安全建议
 
 ### Docker Compose生成流程
 1. **service_analyzer**：分析项目依赖的外部服务，生成服务配置
    - 将服务名称映射到Docker镜像
    - 配置环境变量、端口映射和卷挂载
+   - 对未知服务使用SerperTool检索配置信息和最佳实践
 2. **network_configurator**：设计容器网络结构
    - 配置服务间的网络依赖关系
    - 确保主应用能够访问所有依赖服务
 3. **compose_integrator**：整合所有配置，生成完整的docker-compose.yml
+   - 使用SerperTool验证和优化Docker Compose配置
+   - 检索服务间通信的最佳实践
+
+## 智能网络检索功能
+
+系统集成了SerperTool用于实时网络检索，在以下场景中发挥关键作用：
+
+### Docker最佳实践检索
+- 检索各类服务的官方Docker配置建议
+- 获取最新的安全性和性能优化建议
+- 验证生成的配置是否符合行业标准
+
+### 未知服务依赖解析
+- 当遇到代码中引用但配置信息不明确的服务时，自动检索配置信息
+- 识别服务的最常用Docker镜像版本和配置参数
+- 发现服务的常见依赖项和兼容性要求
+
+### 配置优化
+- 检索特定服务的性能调优参数
+- 获取容器健康检查的最佳实践
+- 查找服务间连接的推荐配置
+
+这种智能检索能力使系统能够生成更符合最新实践和标准的Docker配置，即使面对不熟悉的服务或特殊需求。
 
 ## CrewAI Flow可视化
 
@@ -60,6 +88,7 @@ Docker Compose Generator利用CrewAI框架的多代理协作能力，分析项�
 - Python 3.8+
 - Docker和Docker Compose
 - OpenAI API密钥（用于CrewAI代理）
+- Serper API密钥（用于网络检索功能）
 
 ### 安装
 ```bash
@@ -75,8 +104,9 @@ pip install -r requirements.txt
 在项目根目录创建一个`.env`文件，填入以下配置信息：
 
 ```
-# OpenAI API配置
-OPENAI_API_KEY=your_api_key_here
+# API配置
+OPENAI_API_KEY=your_openai_api_key_here
+SERPER_API_KEY=your_serper_api_key_here
 
 # 项目配置
 PROJECT_NAME=your_project_name
@@ -96,8 +126,9 @@ python -m src.docker_compose_generator.main
 程序会根据CrewAI工作流自动读取配置并按以下步骤执行：
 1. 分析项目结构和依赖
 2. 推断所需的外部服务和中间件
-3. 生成Dockerfile并构建镜像
-4. 生成完整的docker-compose.yml文件
+3. 检索相关服务的最佳实践配置
+4. 生成Dockerfile并构建镜像
+5. 生成完整的docker-compose.yml文件
 
 #### 编程方式使用
 
@@ -183,9 +214,10 @@ src/docker_compose_generator/
 
 1. **项目分析**：分析项目结构和依赖，识别项目类型和运行环境
 2. **服务推断**：根据项目依赖识别所需的外部服务和中间件
-3. **Dockerfile生成**：为项目构建产物生成Dockerfile
-4. **Docker镜像构建**：在正确的构建上下文中构建Docker镜像
-5. **Docker Compose生成**：生成包含所有必要服务的docker-compose.yml
+3. **实时检索**：使用SerperTool查询最新的Docker配置最佳实践和未知服务信息
+4. **Dockerfile生成**：为项目构建产物生成Dockerfile
+5. **Docker镜像构建**：在正确的构建上下文中构建Docker镜像
+6. **Docker Compose生成**：生成包含所有必要服务的docker-compose.yml
 
 整个工作流程可以通过项目根目录下的`crewai_flow.html`可视化查看。
 
@@ -196,10 +228,12 @@ src/docker_compose_generator/
 1. **dockerfile_generator**
    - 角色：Dockerfile工程师
    - 任务：根据构建产物生成优化的Dockerfile
+   - 工具：SerperTool（用于检索最佳实践）
 
 2. **service_analyzer**
    - 角色：外部服务与中间件分析专家
    - 任务：将项目依赖服务转换为docker-compose配置
+   - 工具：SerperTool（用于检索未知服务依赖信息）
 
 3. **network_configurator**
    - 角色：Docker网络配置专家
@@ -208,6 +242,7 @@ src/docker_compose_generator/
 4. **compose_integrator**
    - 角色：Docker Compose集成专家
    - 任务：整合所有服务配置，生成完整的docker-compose.yml
+   - 工具：SerperTool（用于验证配置最佳实践）
 
 ## 示例输出
 
