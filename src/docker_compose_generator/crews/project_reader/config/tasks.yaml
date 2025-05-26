@@ -1,0 +1,38 @@
+project_language_task:
+  description: >
+    Scan the specified project directory,
+    Identify the main programming language used by the project, build tools (such as Maven, Gradle, npm, pip, etc.) and key dependency/configuration files.
+    Output structured information for subsequent dependency analysis.
+  expected_output: >
+    The main programming languages used in the project, build tools (such as Maven, Gradle, npm, pip, etc.)
+    and key dependencies/configuration files
+    Formatted without '```'
+  agent: project_language_analyst
+
+project_dependency_task:
+  description: >
+    Use the absolute path of the project files provided by ProjectLanguageAnalyst to analyse the dependencies.
+    For the dependency_files output by ProjectLanguageAnalyst,
+    each dependency declaration or configuration file is parsed separately.
+    All third-party library dependencies, runtime environments (such as JDK/Node/Python versions),
+    and external services (such as databases, caches, middleware, Object storage, etc.) are extracted.
+    The results are output in a structured JSON format for subsequent services to infer and for automated deployment purposes.
+  expected_output: >
+    All third-party dependencies, runtime environments (such as JDK/Node/Python versions),
+    and external services (such as databases, caches, middleware, etc.),
+    Formatted without '```'
+  agent: project_dependency_analyst
+
+project_type_inference_task:
+  description: >
+    Analyze the structured dependency analysis provided by the context
+    Identify the specific technical stack and type of the project (e.g., "Spring Boot app", "Python Flask web service", "Node.js command-line tool", "Java WAR application"). Consider frameworks, language versions, dependency patterns, and key configuration files (like `pom.xml`, `build.gradle`, `requirements.txt`, `package.json`, `setup.py`, configuration files) found at the provided **absolute paths**.
+    **Integrate the inferred project type information with the detailed dependency analysis received from the 'project_dependency_analyst' task.**
+    Output a combined structured format containing both the inferred project type details and the full dependency analysis.
+  expected_output: >
+    A combined structured object containing:
+    1. The inferred project type details (e.g., fields like "project_type", "language", "framework").
+    2. The full detailed dependency analysis previously provided by the 'project_dependency_analyst' task.
+    The exact structure should nest the inferred type information within the overall output, alongside or within the dependency data, for a comprehensive project overview.
+    Formatted without '```'
+  agent: project_type_inference_agent

@@ -1,0 +1,113 @@
+{
+  "project_type": {
+    "project_type": "Spring Boot app",
+    "language": "Java",
+    "framework": "Spring Boot",
+    "java_version": "17",
+    "build_tool": "Maven",
+    "key_configuration_files": [
+      "D:\\IdeaProjects\\lease\\pom.xml",
+      "D:\\IdeaProjects\\lease\\common\\pom.xml",
+      "D:\\IdeaProjects\\lease\\model\\pom.xml",
+      "D:\\IdeaProjects\\lease\\web\\pom.xml",
+      "D:\\IdeaProjects\\lease\\web\\web-admin\\pom.xml",
+      "D:\\IdeaProjects\\lease\\web\\web-app\\pom.xml",
+      "D:\\IdeaProjects\\lease\\web\\web-admin\\src\\main\\resources\\application.yml",
+      "D:\\IdeaProjects\\lease\\web\\web-app\\src\\main\\resources\\application.yml"
+    ]
+  },
+  "dependencies": [
+    {
+      "groupId": "com.baomidou",
+      "artifactId": "mybatis-plus-boot-starter",
+      "version": "3.5.3.1"
+    },
+    {
+      "groupId": "com.github.xiaoymin",
+      "artifactId": "knife4j-openapi3-jakarta-spring-boot-starter",
+      "version": "4.1.0"
+    },
+    {
+      "groupId": "io.jsonwebtoken",
+      "artifactId": "jjwt-api",
+      "version": "0.11.2"
+    },
+    {
+      "groupId": "io.jsonwebtoken",
+      "artifactId": "jjwt-impl",
+      "scope": "runtime",
+      "version": "0.11.2"
+    },
+    {
+      "groupId": "io.jsonwebtoken",
+      "artifactId": "jjwt-jackson",
+      "scope": "runtime",
+      "version": "0.11.2"
+    },
+    {
+      "groupId": "com.github.whvcse",
+      "artifactId": "easy-captcha",
+      "version": "1.6.2"
+    },
+    {
+      "groupId": "io.minio",
+      "artifactId": "minio",
+      "version": "8.2.0"
+    },
+    {
+      "groupId": "com.aliyun",
+      "artifactId": "dysmsapi20170525",
+      "version": "2.0.23"
+    },
+    {
+      "groupId": "org.springframework.boot",
+      "artifactId": "spring-boot-starter-web",
+      "version": "3.0.5"
+    },
+    {
+      "groupId": "org.springframework.boot",
+      "artifactId": "spring-boot-starter-test",
+      "scope": "test",
+      "version": "3.0.5"
+    },
+    {
+      "groupId": "commons-codec",
+      "artifactId": "commons-codec",
+      "version": "1.11"
+    },
+    {
+      "groupId": "com.mysql",
+      "artifactId": "mysql-connector-j"
+    },
+    {
+      "groupId": "org.projectlombok",
+      "artifactId": "lombok"
+    }
+  ],
+  "external_services": {
+    "databases": [
+      {
+        "type": "MySQL",
+        "driver": "mysql-connector-j"
+      }
+    ],
+    "caches": [
+      {
+        "type": "Redis",
+        "dependency": "spring-boot-starter-data-redis"
+      }
+    ],
+    "object_storage": [
+      {
+        "service": "MinIO",
+        "dependency": "minio"
+      }
+    ],
+    "message_queues": [
+      {
+        "service": "Aliyun SMS",
+        "dependency": "dysmsapi20170525"
+      }
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+service_analysis_task:
+  description: >
+    根据项目依赖分析 {dependencies_analysis} 和项目使用的外部服务、中间件分析 {service_inference_res}，
+    识别项目所需的所有外部服务和中间件，并将它们转换为docker-compose可用的配置。
+
+    你的任务包括：
+    1. 分析项目依赖的外部服务（如MySQL、Redis、Kafka等）
+    2. 为每个服务选择合适的官方Docker镜像和版本
+    3. 配置必要的环境变量、端口映射和卷挂载
+    4. 设置适当的健康检查和重启策略
+
+    注意：项目使用的外部服务、中间件分析中提到的服务名称与属性可能不是docker-compose中使用的标准名称与属性，
+    你需要将其映射到正确的Docker镜像名称。
+  expected_output: >
+    为每个外部服务生成的docker-compose服务配置片段，格式为YAML。
+    每个服务配置应包括镜像、环境变量、端口映射、卷挂载等必要配置。
+    不需要包含完整的docker-compose.yml结构，只需要各个服务的配置部分。
+  agent: service_analyzer
+
+network_configuration_task:
+  description: >
+    根据项目依赖分析 {dependencies_analysis} 和服务分析结果，设计合理的容器网络结构。
+
+    你的任务包括：
+    1. 确定是否需要创建自定义网络
+    2. 设置服务间的网络依赖关系
+    3. 确保主应用能够通过合适的主机名访问各个服务
+    4. 考虑网络隔离和安全性需求
+
+    注意项目的主应用镜像名为 {single_project_image_name}，需要确保它能够正确连接到所有依赖的服务。
+  expected_output: >
+    docker-compose网络配置部分，包括网络定义和各服务的网络设置建议。
+    格式为YAML，可以直接集成到docker-compose.yml文件中。
+  agent: network_configurator
+
+compose_integration_task:
+  description: >
+    根据服务分析和网络配置结果，整合生成完整的docker-compose.yml文件。
+
+    你的任务包括：
+    1. 整合所有服务配置
+    2. 添加项目主应用服务，镜像名为 {single_project_image_name}
+    3. 配置服务间的依赖关系和启动顺序
+    4. 添加必要的全局配置（如版本号、网络定义等）
+    5. 确保配置符合docker-compose规范
+
+    注意：主应用可能需要等待其他服务（如数据库）就绪后才能启动，需要配置适当的依赖关系。
+  expected_output: >
+    完整的docker-compose.yml文件内容，格式为YAML。
+    配置应包括版本声明、所有服务定义、网络配置等，并符合docker-compose规范。
+    输出应该是可以直接保存为docker-compose.yml并运行的完整配置。
+  agent: compose_integrator

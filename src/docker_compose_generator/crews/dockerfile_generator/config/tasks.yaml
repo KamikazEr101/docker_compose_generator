@@ -1,0 +1,25 @@
+dockerfile_generation_task:
+  description: >
+    根据项目分析结果：{project_analysis_results} 和构建产物路径：{artifact_path}，
+    你的任务分为两部分：
+
+    第一部分 - DOCKERFILE创建：
+    生成一个简洁的Dockerfile，需要：
+    - 使用适合的最小基础镜像
+    - 设置工作目录
+    - 使用COPY指令和相对路径（从{artifact_path}推导）
+    - 配置正确的ENTRYPOINT/CMD
+    - 如有需要，包含EXPOSE端口
+
+    第二部分 - 部署操作：
+    1. 首先，确定适当的build context目录（基于artifact路径和COPY指令）
+    2. 必须使用File Writer Tool工具将Dockerfile直接写入到该build context目录
+    3. 确保Dockerfile中的所有路径都相对于build context目录正确
+
+    在Dockerfile顶部添加注释，说明build context目录。
+    以纯文本格式输出Dockerfile内容。
+    ** Formatted without '```' **
+  expected_output: >
+    完整的Dockerfile内容和Dockerfile已被创建的绝对路径。
+    必须包含确认信息，表明已使用FileWriterTool在指定目录成功创建了Dockerfile。
+  agent: dockerfile_generator
