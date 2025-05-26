@@ -67,6 +67,10 @@ Docker Compose Generator 利用 CrewAI 框架的强大功能，通过一系列�
 -   追踪数据在不同阶段间的流动。
 -   辅助调试和优化整个工作流程。
 
+**工作流快照：**
+
+[CrewAI Flow Snapshot](crewai_flow_snapshot.png)
+
 ## 安装与使用
 
 ### 前提条件
