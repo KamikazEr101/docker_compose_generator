@@ -75,7 +75,7 @@ class AnalysisFlow(Flow[AnalysisState]):
         print(f"构建上下文路径: {build_context_path}")
         
         # 构建Docker镜像
-        success, output = build_docker_image(
+        success = build_docker_image(
             build_context_path=build_context_path,
             image_name=self.state.project_name,
         )
