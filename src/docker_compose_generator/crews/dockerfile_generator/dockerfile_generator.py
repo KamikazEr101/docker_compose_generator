@@ -1,5 +1,6 @@
+from pathlib import Path
 from crewai import Agent, Crew, Process, Task
-from crewai_tools import SerperDevTool, FileWriterTool, DirectoryReadTool, FileReadTool
+from crewai_tools import SerperDevTool, FileWriterTool, DirectoryReadTool, FileReadTool, TXTSearchTool
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from pydantic import BaseModel, Field
@@ -10,6 +11,9 @@ class DockerfileResult(BaseModel):
     dockerfile_content: str = Field(description="Dockerfile 内容")
     build_context_path: str = Field(description="build context 目录, 路径不要包含Dockerfile文件名, 以文件路径分隔符结尾")
 
+knowledge_path = (Path(__file__).resolve().parent / ".." / "knowledge" / "DockerfileBestPracticesAndExamples.txt").resolve()
+
+rag_tool = TXTSearchTool(txt=str(knowledge_path))
 
 @CrewBase
 class DockerfileGenerator():
@@ -24,7 +28,7 @@ class DockerfileGenerator():
         return Agent(
             config=self.agents_config['dockerfile_generator'], # type: ignore[index]
             verbose=True,
-            tools=[DirectoryReadTool(), FileWriterTool(), FileReadTool(), SerperDevTool()],
+            tools=[DirectoryReadTool(), FileWriterTool(), FileReadTool(), SerperDevTool(), rag_tool],
         )
     
 

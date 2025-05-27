@@ -1,0 +1,101 @@
+# Dockerfile 最佳实践与示例
+
+本文档总结了编写高效、安全且易于维护的 Dockerfile 的最佳实践，并提供 Spring Boot 和 React 前端项目的示例，基于 [Docker 官方文档](https://docs.docker.com/build/building/best-practices/)，适合导入 RAG 知识库。
+
+## 最佳实践
+
+1. **多阶段构建**  
+   使用多阶段构建分离开发和运行时环境，减少镜像体积。例如，React 应用可先用 Node.js 构建静态文件，再复制到 Nginx 镜像运行。
+
+2. **选择精简基镜像**  
+   优先选择官方轻量镜像（如 `openjdk:17-jdk-slim` 或 `node:18-alpine`），减少安全漏洞和镜像大小。
+
+3. **使用 .dockerignore**  
+   创建 `.dockerignore` 文件排除不必要文件（如 `node_modules`、`.git`、`*.md`），加快构建速度。例如：
+   ```
+   node_modules
+   .git
+   *.md
+   .gitignore
+   ```
+
+4. **避免冗余依赖**  
+   仅安装运行所需包。例如，使用 JRE 而非完整 JDK，保持镜像轻量。
+
+5. **利用构建缓存**  
+   合理排序指令，先复制不变文件（如 `package.json`）并安装依赖，再复制代码，最大化缓存利用率。
+
+6. **固定基镜像版本**  
+   使用特定标签或 SHA256 摘要（如 `node:18-alpine@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c`），避免 `latest` 导致不一致。
+
+7. **创建短暂容器**  
+   确保容器无状态，可随时替换。持久化数据使用外部存储或卷。
+
+8. **解耦应用**  
+   每个容器专注单一职责（如前端、后端），通过网络通信。
+
+9. **排序多行参数**  
+   在 `RUN` 指令中按字母顺序排列参数，提高可读性。例如：
+   ```dockerfile
+   RUN apt-get update && apt-get install -y \
+       package-a \
+       package-b
+   ```
+
+10. **在 CI 中构建和测试**  
+    使用 CI/CD 工具（如 GitHub Actions）自动化构建和测试，确保一致性。
+
+11. **遵循官方指南**  
+    参考 [Dockerfile 参考文档](https://docs.docker.com/reference/dockerfile/)，正确使用 `FROM`、`COPY`、`ENTRYPOINT` 等指令。
+
+## 示例
+
+### Spring Boot 应用
+```dockerfile
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY target/your spring-boot-app.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+**说明**：
+- 使用 `openjdk:17-jdk-slim` 减少镜像体积。
+- 复制预构建 JAR，暴露 8080 端口。
+- 使用 `ENTRYPOINT` 运行应用。
+- **构建与运行**：
+  - 构建：`docker build -t spring-boot-app:latest .`
+  - 运行：`docker run -p 8080:8080 spring-boot-app:latest`
+
+### React 前端项目（生产环境）
+```dockerfile
+# 构建阶段
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# 生产阶段
+FROM nginx:alpine
+COPY --from=builder /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+**说明**：
+- **构建阶段**：使用 `node:18-alpine` 编译 React 应用，生成静态文件。
+- **生产阶段**：使用 `nginx:alpine` 提供静态文件，减小镜像体积。
+- **构建与运行**：
+  - 构建：`docker build -t react-app:latest .`
+  - 运行：`docker run -p 80:80 react-app:latest`
+
+## 注意事项
+- **环境变量**：在 Spring Boot 中，可通过 `ENV` 设置动态配置，如 `ENV SPRING_PROFILES_ACTIVE=production`。
+- **安全性**：避免硬编码敏感信息，使用 Docker 机密或环境变量。
+- **扩展性**：结合 `docker-compose` 管理多容器应用。
+
+## 参考资源
+- [Dockerfile 最佳实践](https://docs.docker.com/build/building/best-practices/)
+- [Dockerfile 参考](https://docs.docker.com/reference/dockerfile/)
+- [Docker Hub 官方镜像](https://hub.docker.com/search?image_filter=official)
+- [Spring Boot Docker 示例](https://www.baeldung.com/dockerizing spring-boot-application)

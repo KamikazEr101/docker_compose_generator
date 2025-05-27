@@ -2,6 +2,7 @@
 __pycache__/
 lib/
 .DS_Store
+db
 .vscode
 tests/
 # Byte-compiled / optimized / DLL files

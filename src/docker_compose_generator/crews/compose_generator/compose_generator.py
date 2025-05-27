@@ -1,7 +1,8 @@
+from pathlib import Path
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
-from crewai_tools import SerperDevTool
+from crewai_tools import SerperDevTool, TXTSearchTool
 from typing import List
 from pydantic import BaseModel, Field
 
@@ -9,6 +10,9 @@ class DockerComposeResult(BaseModel):
     """Docker Compose生成结果"""
     docker_compose_content: str = Field(description="完整的docker-compose.yml文件内容")
 
+knowledge_path = (Path(__file__).resolve().parent / ".." / "knowledge" / "DockerComposeBestPracticesAndExamples.txt").resolve()
+
+rag_tool = TXTSearchTool(txt=str(knowledge_path))
 
 @CrewBase
 class ComposeGenerator():
@@ -23,7 +27,7 @@ class ComposeGenerator():
         return Agent(
             config=self.agents_config['service_analyzer'], # type: ignore[index]
             verbose=True,
-            tools=[SerperDevTool()],
+            tools=[SerperDevTool(), rag_tool],
         )
 
     @agent
@@ -31,9 +35,9 @@ class ComposeGenerator():
         return Agent(
             config=self.agents_config['network_configurator'], # type: ignore[index]
             verbose=True,
-            tools=[SerperDevTool()],
+            tools=[SerperDevTool(), rag_tool],
         )
-        
+
     @agent
     def compose_integrator(self) -> Agent:
         return Agent(
