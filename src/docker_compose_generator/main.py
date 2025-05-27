@@ -84,8 +84,6 @@ class AnalysisFlow(Flow[AnalysisState]):
         
         if success:
             print(f"Docker镜像构建成功: {self.state.single_project_image_name}")
-        else:
-            print(output)
         
         return "image_builder completed"
     

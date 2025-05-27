@@ -21,7 +21,7 @@ def build_docker_image(
         Tuple[bool, str]: (是否成功, 输出信息)
     """
     # 构建docker build命令
-    cmd = ["docker", "build", "-t", f"{image_name}:{image_tag}"]
+    cmd = ["docker", "build", ".", "-t", f"{image_name}:{image_tag}"]
     
     # 是否禁用缓存
     if no_cache:
@@ -49,19 +49,10 @@ def build_docker_image(
             text=True
         )
         
-        # 简单输出
-        output = f"命令: {cmd_str}\n"
-        output += f"工作目录: {build_context_path}\n"
-        output += f"返回码: {process.returncode}\n\n"
-        output += f"输出:\n{process.stdout}\n"
-        
-        if process.stderr:
-            output += f"错误:\n{process.stderr}\n"
-        
         # 判断是否成功
         success = process.returncode == 0
         
-        return success, output
+        return success
         
     except Exception as e:
         return False, str(e)

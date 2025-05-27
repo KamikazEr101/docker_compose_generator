@@ -11,4 +11,4 @@ dockerfile_generator:
     uses paths relative to the build context (the directory where 'docker build' is run), not absolute host paths.
     You are skilled at translating deployment requirements into robust and functional Dockerfiles
     that focus on the runtime environment and minimize image size by correctly handling pre-built artifacts.
-  model: openai/gpt-4o-mini
+  llm: openai/gpt-4o-mini
