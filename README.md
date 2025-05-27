@@ -16,6 +16,7 @@ Docker Compose Generator 利用 CrewAI 框架的强大功能，通过一系列�
 - **配置文件驱动行为**：每个Crew的行为（代理角色、任务描述）都在其各自的 `config/agents.yaml` 和 `config/tasks.yaml` 文件中定义，方便调整和扩展。
 - **工具集成**：集成了如 `SerperTool` 进行实时网络检索（例如，获取Docker最佳实践、解析未知服务依赖）和 `FileWriterTool` 进行文件操作。
 - **工作流可视化**：项目执行后会在根目录生成 `crewai_flow.html`，提供 `AnalysisFlow` 中定义的Crews及其任务之间关系的直观可视化展示。
+- **RAG增强**：智能体能够利用 Dockerfile 和 Docker Compose 的最佳实践作为知识库，通过RAG技术增强生成内容的准确性和专业性（默认使用OpenAI的嵌入模型）。
 
 ## 主要功能
 
@@ -25,6 +26,7 @@ Docker Compose Generator 利用 CrewAI 框架的强大功能，通过一系列�
 - **自动化Docker镜像构建**：使用生成的Dockerfile在正确的构建上下文中构建主应用的Docker镜像。
 - **完整的Docker Compose配置生成**：基于分析结果和生成的镜像，创建包含主应用及所有推断出的外部服务的 `docker-compose.yml` 文件。
 - **实时最佳实践与未知服务解析**：通过 `SerperTool` 查询最新的Docker配置最佳实践和处理在分析中遇到的未知服务依赖。
+- **基于RAG的知识增强**：将Dockerfile和Docker Compose的最佳实践文档作为知识库，通过检索增强生成（RAG）为智能体提供决策支持（默认使用OpenAI的嵌入模型），确保生成的配置符合行业标准和最佳实践。
 
 ## 系统架构与工作流程 (`AnalysisFlow`)
 
@@ -76,13 +78,13 @@ Docker Compose Generator 利用 CrewAI 框架的强大功能，通过一系列�
 ### 前提条件
 - Python 3.8+
 - Docker 和 Docker Compose
-- OpenAI API 密钥 (用于CrewAI代理)
+- OpenAI API 密钥 (用于CrewAI代理及默认的RAG嵌入模型)
 - Serper API 密钥 (用于网络检索功能)
 
 ### 安装
 ```bash
 # 克隆仓库
-git clone https://github.com/yourusername/docker_compose_generator.git
+git clone https://github.com/KamikazEr101/docker_compose_generator.git
 cd docker_compose_generator
 
 # 安装依赖
@@ -110,7 +112,7 @@ ARTIFACT_PATH="/path/to/your/project/target/your_artifact.jar" # 主应用构建
 python -m src.docker_compose_generator.main
 ```
 
-此命令将触发 `AnalysisFlow`，依次执行上述四个主要阶段。最终生成的 `Dockerfile` (在对应的 `build_context_path`下) 和 `docker-compose.yml` (通常在 `output/` 目录下) 可用于部署项目。
+此命令将触发 `AnalysisFlow`，依次执行上述四个主要阶段。最终生成的 `Dockerfile` (在对应的 `build_context_path`下) 和 `docker-compose.yml` ( `output/` 目录下) 可用于部署项目。
 
 ### 编程方式与单个Crew交互
 除了运行完整的 `AnalysisFlow`，您也可以在代码中单独初始化并运行特定的Crew，例如：
@@ -160,12 +162,15 @@ src/docker_compose_generator/
     │   └── config/
     │       ├── agents.yaml
     │       └── tasks.yaml
-    └── compose_generator/
-        ├── __init__.py
-        ├── compose_generator.py # ComposeGenerator Crew 定义
-        └── config/
-            ├── agents.yaml
-            └── tasks.yaml
+    ├── compose_generator/
+    │   ├── __init__.py
+    │   ├── compose_generator.py # ComposeGenerator Crew 定义
+    │   └── config/
+    │       ├── agents.yaml
+    │       └── tasks.yaml
+    └── knowledge/          # RAG知识库文档
+        ├── DockerComposeBestPracticesAndExamples.txt
+        └── DockerfileBestPracticesAndExamples.txt
 ```
 
 ## 自定义与扩展
@@ -173,11 +178,4 @@ src/docker_compose_generator/
 -   **调整代理行为**: 修改对应Crew的 `config/agents.yaml` (角色、目标、背景) 和 `config/tasks.yaml` (任务描述、预期输出)。
 -   **扩展Crew功能**: 在Crew的Python定义文件中添加新的 `@agent` 或 `@task`。
 -   **修改流程**: 调整 `main.py` 中的 `AnalysisFlow` 定义，改变Crew的调用顺序或依赖关系。
--   **添加新Crew**: 创建新的Crew目录结构，并在 `crews/__init__.py` 和 `main.py` 中集成。
-
-## 注意事项
-
--   确保 `.env` 文件中的路径为绝对路径且正确无误。
--   AI代理的输出质量依赖于OpenAI模型的版本和提示词的清晰度。
--   生成的配置文件（Dockerfile, docker-compose.yml）建议在生产部署前进行人工审查和测试。
-
+-   **添加新Crew**: 创建新的Crew目录结构，并在 `crews/__init__.py` 和 `
