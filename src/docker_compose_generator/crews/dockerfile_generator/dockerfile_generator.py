@@ -37,7 +37,8 @@ class DockerfileGenerator():
         return Task(
             config=self.tasks_config['dockerfile_generation_task'], # type: ignore[index]
             output_file=r"output/Dockerfile_result.txt",
-            output_pydantic=DockerfileResult
+            output_pydantic=DockerfileResult,
+            markdown=False
         )
         
 

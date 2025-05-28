@@ -65,6 +65,7 @@ class ComposeGenerator():
             config=self.tasks_config['compose_integration_task'], # type: ignore[index]
             context=[self.service_analysis_task(), self.network_configuration_task()],
             output_file='output/docker-compose.yml',
+            markdown=False
         )
 
     @crew
