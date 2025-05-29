@@ -88,6 +88,9 @@ class ProjectFileListTool(BaseTool):
         result = "Project file list: \n- " + "\n- ".join(files_list)
         PROJECT_FILES = result
 
-        with open("output/project_file_list.txt", "w", encoding="utf-8") as f:
-            f.write(result)
+        if not os.path.exists("output"):
+            os.makedirs("output")
+        if not os.path.exists("output/project_file_list.txt"):
+            with open("output/project_file_list.txt", "w", encoding="utf-8") as f:
+                f.write(result)
         return result
