@@ -31,6 +31,7 @@ service_inference_cache_task:
 service_inference_custom_task:
   description: >
     Analyze the structured dependency analysis provided by the 'project_dependency_analyst' agent ({dependencies_analysis}) and the project's source and configuration files referenced by their **absolute paths** ({project_files_path}).
+    If you don't know the service, you can use the network search tool to search the service.
     Identify any additional, non-standard, or custom external services (e.g., Elasticsearch, MinIO, external APIs, file storage, identity providers, etc.) required by the project, infer their versions, and extract key parameters (such as port, authentication mechanisms, URLs, relevant configuration details) by examining the content found at the provided **absolute paths**. This analysis should be applicable to projects written in **any programming language**, inferring requirements based on project files and dependencies regardless of the specific language or framework used.
     You MUST use the information derived from the structured analysis and, critically, the actual file contents read using their **absolute paths** to perform this inference.
     Additionally, infer any required **runtime environment versions** (e.g., JDK version for Java, Node.js version for JavaScript, Python version for Python) based on the project's dependencies and configuration found via the context.

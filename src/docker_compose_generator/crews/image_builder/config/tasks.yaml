@@ -4,14 +4,14 @@ dockerfile_generation_task:
     你的任务分为两部分：
 
     第一部分 - DOCKERFILE创建：
-    生成一个简洁的Dockerfile，需要：
+    生成一个简洁的Dockerfile，需要使用rag_tool来获取最佳实践， 根据项目分析结果，必要时使用网络检索工具：
     - 使用适合的最小基础镜像
     - 设置工作目录
     - 使用COPY指令和相对路径（从{artifact_path}推导）
     - 配置正确的ENTRYPOINT/CMD
     - 如有需要，包含EXPOSE端口
 
-    第二部分 - 部署操作：
+    第二部分 - 部署操作必须使用File Writer Tool工具：
     1. 首先，确定适当的build context目录（基于artifact路径和COPY指令）
     2. 必须使用File Writer Tool工具将Dockerfile直接写入到该build context目录
     3. 确保Dockerfile中的所有路径都相对于build context目录正确
@@ -23,3 +23,11 @@ dockerfile_generation_task:
     完整的Dockerfile内容和Dockerfile已被创建的绝对路径。
     必须包含确认信息，表明已使用FileWriterTool在指定目录成功创建了Dockerfile。
   agent: dockerfile_generator
+
+docker_build_task:
+  description: >
+    使用先前任务生成的Dockerfile和dockerfile_generation_task输出的构建上下文路径来构建Docker镜像。
+    并根据项目名称{project_name}分析镜像名称，并使用DockerBuildTool来执行此操作。
+  expected_output: >
+    构建成功或失败信息，若构建成功，则输出镜像名称。
+  agent: docker_build_agent

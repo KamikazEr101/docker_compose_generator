@@ -2,6 +2,7 @@ service_analysis_task:
   description: >
     根据项目依赖分析 {dependencies_analysis} 和项目使用的外部服务、中间件分析 {service_inference_res}，
     识别项目所需的所有外部服务和中间件，并将它们转换为docker-compose可用的配置。
+    你需要使用rag_tool来获取最佳实践, 必要时使用网络检索工具。
 
     你的任务包括：
     1. 分析项目依赖的外部服务（如MySQL、Redis、Kafka等）
@@ -20,6 +21,7 @@ service_analysis_task:
 network_configuration_task:
   description: >
     根据项目依赖分析 {dependencies_analysis} 和服务分析结果，设计合理的容器网络结构。
+    你需要使用rag_tool来获取最佳实践, 必要时使用网络检索工具。
 
     你的任务包括：
     1. 确定是否需要创建自定义网络

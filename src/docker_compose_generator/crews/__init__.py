@@ -1,7 +1,7 @@
 from .project_reader import ProjectReader
 from .service_inference import ServiceInference
-from .dockerfile_generator import DockerfileGenerator
+from .image_builder import ImageBuilder
 from .compose_generator import ComposeGenerator
 
-__all__ = ["ProjectReader", "ServiceInference", "DockerfileGenerator", "ComposeGenerator"]
+__all__ = ["ProjectReader", "ServiceInference", "ImageBuilder", "ComposeGenerator"]
 

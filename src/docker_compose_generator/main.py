@@ -5,8 +5,7 @@ from crewai import CrewOutput
 from time import time
 from pydantic import BaseModel
 from crewai.flow import Flow, listen, start, persist, and_
-from crews import ProjectReader, ServiceInference, DockerfileGenerator, ComposeGenerator
-from utils import build_docker_image
+from crews import ProjectReader, ServiceInference, ImageBuilder, ComposeGenerator
 from contants import preset_dependencies_analysis, preset_service_inference
 from dotenv import load_dotenv
 
@@ -18,8 +17,8 @@ class AnalysisState(BaseModel):
     project_path: str = ""
     artifact_path: str = ""
     project_files_path: str = ""
-    dependencies_analysis: str = ""
-    service_inference_res: str = ""
+    dependencies_analysis: str = preset_dependencies_analysis
+    service_inference_res: str = preset_service_inference
     single_project_image_name: str = ""
     
 class AnalysisFlow(Flow[AnalysisState]):
@@ -63,32 +62,21 @@ class AnalysisFlow(Flow[AnalysisState]):
     @listen(read_project_structure)
     def image_builder(self, _):
         """Builds the docker image"""
-        dockerfile_result: CrewOutput = DockerfileGenerator().crew().kickoff(
+        build_result: CrewOutput = ImageBuilder().crew().kickoff(
             inputs={
                 "project_analysis_results": self.state.dependencies_analysis,
                 "artifact_path": self.state.artifact_path,
+                "project_name": self.state.project_name,
                 }
-            )
-        
-        # 获取构建上下文路径
-        build_context_path = dockerfile_result.pydantic.model_dump().get('build_context_path')
-        print(f"构建上下文路径: {build_context_path}")
-        
-        # 构建Docker镜像
-        success, output = build_docker_image(
-            build_context_path=build_context_path,
-            image_name=self.state.project_name,
         )
         
-        self.state.single_project_image_name = self.state.project_name + ":latest"
-        
-        if success:
-            print(f"Docker镜像构建成功: {self.state.single_project_image_name}")
+        result_dict = build_result.pydantic.model_dump()
+        if result_dict['success']:
+            self.state.single_project_image_name = result_dict['image_name']
+            print(f"成功构建镜像: {self.state.single_project_image_name}")
         else:
-            print(f"Docker镜像构建失败")
-            
-        print(output)
-        
+            print("构建镜像失败")
+            print(result_dict['error_message'])
         return "image_builder completed"
     
     @listen(and_(image_builder, service_inference))

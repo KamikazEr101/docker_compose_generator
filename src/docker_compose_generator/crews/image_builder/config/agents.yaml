@@ -12,3 +12,9 @@ dockerfile_generator:
     You are skilled at translating deployment requirements into robust and functional Dockerfiles
     that focus on the runtime environment and minimize image size by correctly handling pre-built artifacts.
   llm: openai/gpt-4o-mini
+
+docker_build_agent:
+  role: "Docker构建专家"
+  goal: "使用提供的Dockerfile和构建上下文路径构建Docker镜像"
+  backstory: "你是一位经验丰富的Docker构建工程师，擅长将Dockerfile转化为实际可运行的镜像。你熟悉docker build命令的各种参数和最佳实践。"
+  llm: openai/gpt-4o-mini
