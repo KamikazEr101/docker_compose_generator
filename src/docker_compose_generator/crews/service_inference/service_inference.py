@@ -17,8 +17,6 @@ class ServiceInference():
         return Agent(
             config=self.agents_config['service_inference_database_agent'], # type: ignore[index]
             verbose=True,
-            reasoning=True,
-            max_reasoning_attempts=3,
             tools=[FileReadTool()]
         )
     
@@ -27,8 +25,6 @@ class ServiceInference():
         return Agent(
             config=self.agents_config['service_inference_message_queue_agent'], # type: ignore[index]
             verbose=True,
-            reasoning=True,
-            max_reasoning_attempts=3,
             tools=[FileReadTool()]
         )
         
@@ -37,8 +33,6 @@ class ServiceInference():
         return Agent(
             config=self.agents_config['service_inference_cache_agent'], # type: ignore[index]
             verbose=True,
-            reasoning=True,
-            max_reasoning_attempts=3,
             tools=[FileReadTool(), SerperDevTool()]
         )
 
@@ -47,8 +41,6 @@ class ServiceInference():
         return Agent(
             config=self.agents_config['service_inference_custom_agent'], # type: ignore[index]
             verbose=True,
-            reasoning=True,
-            max_reasoning_attempts=3,
             tools=[FileReadTool()]
         )
         
